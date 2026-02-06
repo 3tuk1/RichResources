@@ -1,6 +1,10 @@
 local Utils = require("scripts.utils")
 local Processor = require("scripts.processor")
 local Worker = require("scripts.worker")
+local Debug = require("scripts.debug")
+
+-- デバッグ用インターフェース登録
+Debug.register()
 
 --[[ イベントハンドラの登録 ]]--
 
