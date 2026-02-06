@@ -71,5 +71,29 @@ data:extend({
      setting_type = "runtime-global",
      default_value = false,
      order = "a[richresources]-f[apply-maintenance]"
+   },
+   {
+     type = "bool-setting",
+     name = "richresources-enable-distance-bonus",
+     setting_type = "runtime-global",
+     default_value = false,
+     order = "a[richresources]-g[enable-distance-bonus]"
+   },
+   {
+     type = "int-setting",
+     name = "richresources-distance-interval",
+     setting_type = "runtime-global",
+     default_value = 1000,
+     minimum_value = 100,
+     order = "a[richresources]-h[distance-interval]"
+   },
+   {
+     type = "double-setting",
+     name = "richresources-distance-rate",
+     setting_type = "runtime-global",
+     default_value = 0.5,
+     minimum_value = 0.01,
+     maximum_value = 100.0,
+     order = "a[richresources]-i[distance-rate]"
    }
 })
