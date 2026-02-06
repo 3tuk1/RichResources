@@ -1,4 +1,5 @@
 local Utils = require("scripts.utils")
+local Core = require("scripts.core")
 local Worker = {}
 
 local CHUNK_SIZE = 32
@@ -90,38 +91,10 @@ function Worker.process_apply_queue(event)
           end
 
           if should_apply then
-            local new_amount = 0
-            
-            if entity.prototype.infinite_resource then
-                -- Infinite resources (Oil): Ensure minimum base amount from settings
-                local min_base = settings.global["rich-resources-infinite-min-base"].value
-                local base = entity.amount
-                if base < min_base then base = min_base end
-                new_amount = math.floor(base * multiplier)
-            else
-                -- Finite resources: Ensure at least 1 before multiplier
-                local base = entity.amount
-                if base < 1 then base = 1 end
-                new_amount = math.floor(base * multiplier)
+            -- Use Core logic for consistent application
+            if Core.apply_multiplier(entity, multiplier) then
+                global.richResources.apply_processed_count = (global.richResources.apply_processed_count or 0) + 1
             end
-
-            if new_amount < 1 then new_amount = 1 end
-            entity.amount = math.min(new_amount, max_amount)
-
-            if entity_id then
-              global.richResources.processed_entities[entity_id] = true
-            end
-
-            if success then
-              pcall(function()
-                local t = entity.tags or {}
-                t.rich_resources_applied = true
-                t.rich_resources_gen = global.richResources.generation or 1
-                entity.tags = t
-              end)
-            end
-
-            global.richResources.apply_processed_count = (global.richResources.apply_processed_count or 0) + 1
           end
         end
       end
@@ -142,7 +115,7 @@ function Worker.process_apply_queue(event)
 
     local count = global.richResources.apply_processed_count or 0
     pcall(function()
-      game.print({"gui.rich-resources-applied-message", tostring(count)})
+      game.print({"gui.rich-resources-applied-message"})
     end)
     
     -- Check pending jobs

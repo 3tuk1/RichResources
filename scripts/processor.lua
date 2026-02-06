@@ -1,4 +1,5 @@
 local Utils = require("scripts.utils")
+local Core = require("scripts.core")
 local Processor = {}
 
 function Processor.apply_rich_resources_in_area(surface, area)
@@ -40,38 +41,8 @@ function Processor.apply_rich_resources_in_area(surface, area)
           global.richResources.processed_entities[entity_id] = true
         end
       else
-        -- 未処理なので倍率を適用
-        local new_amount = 0
-        if entity.prototype.infinite_resource then
-            -- Infinite resources: Ensure min base
-            local min_base = settings.global["rich-resources-infinite-min-base"].value
-            local base = entity.amount
-            if base < min_base then base = min_base end
-            new_amount = math.floor(base * multiplier)
-        else
-            -- Finite resources
-            local base = entity.amount
-            if base < 1 then base = 1 end
-            new_amount = math.floor(base * multiplier)
-        end
-
-        if new_amount < 1 then new_amount = 1 end
-        entity.amount = math.min(new_amount, max_amount)
-        
-        -- 処理済みマークを付ける
-        if entity_id then
-          global.richResources.processed_entities[entity_id] = true
-        end
-        
-        -- tagsが利用可能な場合のみ設定
-        if success then
-          pcall(function() 
-            local t = entity.tags or {}
-            t.rich_resources_applied = true
-            t.rich_resources_gen = global.richResources.generation or 1
-            entity.tags = t
-          end)
-        end
+        -- 未処理なので倍率を適用 (Coreロジックを使用)
+        Core.apply_multiplier(entity, multiplier)
       end
     end
   end
