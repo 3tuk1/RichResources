@@ -1,9 +1,9 @@
 {
   "name": "RichResources",
-  "version": "1.4.2",
+  "version": "1.5.0",
   "title": "Rich Resources",
   "author": "sirokoke",
   "factorio_version": "2.0",
   "dependencies": ["base >= 2.0", "? space-age", "? space-exploration"],
-  "description": "All resource richness is multiplied by a configurable value. You can change the multiplier in the mod settings."
+  "description": "Multiplies all resource richness by a configurable value. Now includes Random Variance, Distance Bonus, and Maintenance features for existing maps. / 全ての資源の埋蔵量を設定した倍率で増やします。ランダム変動、距離ボーナス、既存マップへの適用(メンテナンス)機能などが追加されました。"
 }

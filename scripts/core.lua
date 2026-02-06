@@ -3,10 +3,25 @@ local Core = {}
 
 -- Applies the resource multiplier to a specific entity
 -- Includes calculation logic and state updates
-function Core.apply_multiplier(entity, base_multiplier)
+-- rng: Optional LuaRandomGenerator for deterministic results
+function Core.apply_multiplier(entity, base_multiplier, rng)
     if not entity or not entity.valid then return false end
     
     local multiplier = base_multiplier
+
+    -- Apply Random Variance
+    local randomness = settings.global["rich-resources-randomness-factor"].value
+    if randomness > 0 then
+        local r_val = 0
+        if rng then
+            r_val = rng() -- 0.0 to 1.0
+        else
+            r_val = math.random()
+        end
+        local variance = (r_val * 2.0) - 1.0 -- -1.0 to 1.0
+        local offset = variance * randomness
+        multiplier = multiplier * (1.0 + offset)
+    end
 
     -- Apply Distance Bonus
     local dist_enabled = settings.global["richresources-enable-distance-bonus"] and settings.global["richresources-enable-distance-bonus"].value

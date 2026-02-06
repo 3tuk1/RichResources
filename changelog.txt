@@ -1,216 +1,186 @@
-====================================================================================================
-Rich Resources - Changelog
-====================================================================================================
+---------------------------------------------------------------------------------------------------
+Version: 1.5.0
+Date: 07. 02. 2026
+  Features:
+    - Added Maintenance Mode: Allows applying an additional multiplier to resources already processed by this mod.
+    - Added Random Variance: Adds random fluctuation to the richness multiplier (e.g. +/-20%).
+    - Added Distance Bonus: Multiplier can now increase based on distance from the starting area.
+    - Improved "Reset Processed List": Introduced generation tracking for safer re-application without game restart.
+  機能追加:
+    - メンテナンスモードを追加: 既にMODで処理済みの資源に対して、後から追加で倍率を適用できるようになりました。
+    - ランダム変動（ゆらぎ）機能を追加: 倍率にランダムなばらつきを持たせることができるようになりました。
+    - 距離ボーナス機能を追加: スタート地点からの距離に応じて倍率を加算できるようになりました。
+    - 「処理済みリストのリセット」機能を改善: 世代管理(Generation)を導入し、ゲーム再起動なしで安全に再適用が可能になりました。
 
+---------------------------------------------------------------------------------------------------
 Version: 1.4.2
-Date: 2026-02-06
-## 機能追加 (Features)
-- 無限資源（原油など）の計算用最小ベース量を設定する機能を追加しました (`rich-resources-infinite-min-base`)。
-  - デフォルトは300,000 (300%) です。枯渇して0%表記になってしまった油田などを復活させる際に、この値をベースとして倍率を掛けます。
-- 有限資源に対する最小ベース量を設定する機能を追加しました (`rich-resources-finite-min-base`)。
-  - デフォルトは1です。
+Date: 06. 02. 2026
+  Features:
+    - Added a setting to configure the minimum base amount for infinite resources (`rich-resources-infinite-min-base`).
+    - Added a setting to configure the minimum base amount for finite resources (`rich-resources-finite-min-base`).
+  機能追加:
+    - 無限資源（原油など）の計算用最小ベース量を設定する機能を追加しました (`rich-resources-infinite-min-base`)。
+    - 有限資源に対する最小ベース量を設定する機能を追加しました (`rich-resources-finite-min-base`)。
 
-## Features (English)
-- Added a setting to configure the minimum base amount for infinite resources (`rich-resources-infinite-min-base`).
-  - Default is 300,000 (300%). This value is used as the base before multiplication when restoring depleted resources (e.g., oil wells showing 0%).
-- Added a setting to configure the minimum base amount for finite resources (`rich-resources-finite-min-base`).
-  - Default is 1.
-
-----------------------------------------------------------------------------------------------------
-
+---------------------------------------------------------------------------------------------------
 Version: 1.4.1
-Date: 2026-02-06
-## 注意 (Important)
-- 旧バージョンからのアップデート時、内部データ構造の変更により過去の適用履歴（タグ）が正しく引き継げず、既存の鉱石に再度倍率が適用される可能性があります。
-  - 今回の適用記録は次回以降のアップデートでも確実に保護されます。
+Date: 06. 02. 2026
+  Important:
+    - Upon updating from older versions, existing resources may be multiplied again because previous application history (tags) might not be recognized due to internal data structure changes.
+    - Application records from this version onwards will be preserved correctly.
+  Changed:
+    - Adjusted calculation formula to `(amount + 1) * multiplier` to allow restoring entities with 0 resource amount (e.g. depleted oil wells).
+  注意:
+    - 旧バージョンからのアップデート時、内部データ構造の変更により過去の適用履歴（タグ）が正しく引き継げず、既存の鉱石に再度倍率が適用される可能性があります。
+    - 今回の適用記録は次回以降のアップデートでも確実に保護されます。
+  変更:
+    - 資源量が0になってしまったエンティティ（枯渇した油田など）に対しても、倍率を適用して復旧できるように計算式を調整しました `(amount + 1) * multiplier`。
 
-## Important (English)
-- Upon updating from older versions, existing resources may be multiplied again because previous application history (tags) might not be recognized due to internal data structure changes.
-  - Application records from this version onwards will be preserved correctly.
-
-## 変更 (Changed)
-- 資源量が0になってしまったエンティティ（枯渇した油田など）に対しても、倍率を適用して復旧できるように計算式を調整しました `(amount + 1) * multiplier`。
-  - ※副作用として、全鉱石に対して計算上 +1 された状態で倍率がかかりますが、全体量に対しては誤差の範囲です。
-
-## Changed (English)
-- Adjusted calculation formula to `(amount + 1) * multiplier` to allow restoring entities with 0 resource amount (e.g. depleted oil wells).
-  - Note: This adds a slight increase (+1 before multiplication) to all resources, but is negligible for normal amounts.
-
-----------------------------------------------------------------------------------------------------
-
+---------------------------------------------------------------------------------------------------
 Version: 1.4.0
-Date: 2026-02-06
-## 機能追加 (Features)
-- 既に倍率が適用済みの鉱石に対して、さらに追加で倍率を掛ける「追加変更倍率（メンテナンス）」機能を追加しました。
-- メンテナンスモード実行時、他の処理が実行中であれば完了を待ってから自動実行する予約システムを追加しました。
-- メンテナンスモードの対象判定を改善し、内部IDキャッシュだけでなくタグ情報も参照するようにしました。
+Date: 06. 02. 2026
+  Features:
+    - Added "Maintenance Multiplier" feature to apply an additional multiplier to already processed resources.
+    - Added a queuing system to automatically run maintenance tasks after any currently running tasks complete.
+    - Improved maintenance targeting logic to check both internal ID cache and entity tags.
+  機能追加:
+    - 既に倍率が適用済みの鉱石に対して、さらに追加で倍率を掛ける「追加変更倍率（メンテナンス）」機能を追加しました。
+    - メンテナンスモード実行時、他の処理が実行中であれば完了を待ってから自動実行する予約システムを追加しました。
+    - メンテナンスモードの対象判定を改善し、内部IDキャッシュだけでなくタグ情報も参照するようにしました。
 
-## Features (English)
-- Added "Maintenance Multiplier" feature to apply an additional multiplier to already processed resources.
-- Added a queuing system to automatically run maintenance tasks after any currently running tasks complete.
-- Improved maintenance targeting logic to check both internal ID cache and entity tags.
-
-----------------------------------------------------------------------------------------------------
-
+---------------------------------------------------------------------------------------------------
 Version: 1.3.0
-Date: 2026-02-06
-## 機能追加 (Features)
-- 「処理済みリストをリセット」設定を追加しました。これにより、既に倍率が適用された資源に対しても、再度倍率を適用することが可能になります（世代管理システムの導入）。
-- リセット処理完了後、設定が自動的にオフになる機能を追加しました。
+Date: 06. 02. 2026
+  Features:
+    - Added "Reset processed list" setting. This allows re-applying the multiplier to already processed resources via a new generation tracking system.
+    - The reset setting will automatically turn off after the process is complete.
+  Changed:
+    - Removed "Ignore Processed State" setting (superseded by the reset function).
+    - Improved internal resource management logic to include generation information in tags.
+  機能追加:
+    - 「処理済みリストをリセット」設定を追加しました。これにより、既に倍率が適用された資源に対しても、再度倍率を適用することが可能になります（世代管理システムの導入）。
+    - リセット処理完了後、設定が自動的にオフになる機能を追加しました。
+  変更:
+    - 「未処理判定を無視する」設定を削除しました（リセット機能に統合）。
+    - 内部的な資源管理ロジックを改善し、タグに世代（Generation）情報を含めるようにしました。
 
-## 変更 (Changed)
-- 「未処理判定を無視する」設定を削除しました（リセット機能に統合）。
-- 内部的な資源管理ロジックを改善し、タグに世代（Generation）情報を含めるようにしました。
-
-## Features (English)
-- Added "Reset processed list" setting. This allows re-applying the multiplier to already processed resources via a new generation tracking system.
-- The reset setting will automatically turn off after the process is complete.
-
-## Changed (English)
-- Removed "Ignore Processed State" setting (superseded by the reset function).
-- Improved internal resource management logic to include generation information in tags.
-
-----------------------------------------------------------------------------------------------------
-
+---------------------------------------------------------------------------------------------------
 Version: 1.2.11
-Date: 2026-02-06
-## 変更 (Changed)
-- 設定を「Startup」から「Map (Runtime Global)」へ移動しました。これによりゲーム内（マップ設定）で倍率を変更できるようになりました。
+Date: 06. 02. 2026
+  Changed:
+    - Moved settings from "Startup" to "Map (Runtime Global)". This allows changing the multiplier in-game via map settings.
+  Bugfixes:
+    - Fixed an issue where the multiplier was applied twice to some resource entities (those without unit_number) by adding coordinate-based identification.
+  変更:
+    - 設定を「Startup」から「Map (Runtime Global)」へ移動しました。これによりゲーム内（マップ設定）で倍率を変更できるようになりました。
+  バグ修正:
+    - 一部の資源エンティティ（unit_numberを持たないもの）に対して倍率が重複して適用される問題を修正しました。座標ベースの識別を追加しました。
 
-## バグ修正 (Bugfixes)
-- 一部の資源エンティティ（unit_numberを持たないもの）に対して倍率が重複して適用される問題を修正しました。座標ベースの識別を追加しました。
-
-## Changed (English)
-- Moved settings from "Startup" to "Map (Runtime Global)". This allows changing the multiplier in-game via map settings.
-
-## Bugfixes (English)
-- Fixed an issue where the multiplier was applied twice to some resource entities (those without unit_number) by adding coordinate-based identification.
-
-----------------------------------------------------------------------------------------------------
-
+---------------------------------------------------------------------------------------------------
 Version: 1.2.10
-Date: 2026-02-06
-## 変更 (Changed)
-- 資源倍率設定の下限を 1 から 0.001 に変更しました。これにより資源を減らす設定が可能になります。
-- チャンク生成時の処理を1tick遅延させるように変更しました。これにより他の資源生成系MODとの競合を防ぎ、確実に倍率が適用されるようになります。
+Date: 06. 02. 2026
+  Changed:
+    - Changed the minimum value of resource multiplier setting from 1 to 0.001. This allows reducing resource amounts.
+    - Changed chunk generation processing to be delayed by 1 tick. This prevents conflicts with other resource generation mods and ensures reliability.
+  Bugfixes:
+    - Fixed an issue where processing was skipped when the multiplier was less than 1 (e.g. 0.5).
+  変更:
+    - 資源倍率設定の下限を 1 から 0.001 に変更しました。これにより資源を減らす設定が可能になります。
+    - チャンク生成時の処理を1tick遅延させるように変更しました。これにより他の資源生成系MODとの競合を防ぎ、確実に倍率が適用されるようになります。
+  バグ修正:
+    - 倍率が1未満（例: 0.5）の場合に処理がスキップされてしまう問題を修正しました。
 
-## バグ修正 (Bugfixes)
-- 倍率が1未満（例: 0.5）の場合に処理がスキップされてしまう問題を修正しました。
-
-## Changed (English)
-- Changed the minimum value of resource multiplier setting from 1 to 0.001. This allows reducing resource amounts.
-- Changed chunk generation processing to be delayed by 1 tick. This prevents conflicts with other resource generation mods and ensures reliability.
-
-## Bugfixes (English)
-- Fixed an issue where processing was skipped when the multiplier was less than 1 (e.g. 0.5).
-
-----------------------------------------------------------------------------------------------------
-
+---------------------------------------------------------------------------------------------------
 Version: 1.2.9
-Date: 2026-02-06
-## 追加 (Added)
-- 「未処理判定を無視する」（Ignore Processed State）設定を追加しました。
-- この設定を有効にすると、既にこのMODで処理済みとマークされている資源に対しても、倍率を再適用できるようになります。
+Date: 06. 02. 2026
+  Added:
+    - 「未処理判定を無視する」（Ignore Processed State）設定を追加しました。
+    - この設定を有効にすると、既にこのMODで処理済みとマークされている資源に対しても、倍率を再適用できるようになります。
 
-----------------------------------------------------------------------------------------------------
-
+---------------------------------------------------------------------------------------------------
 Version: 1.2.8
-Date: 2026-02-03
-## 変更 (Changed)
-- 資源の豊富さの倍率設定(rich-resources-multiplier)を「スタートアップ」設定に変更しました。これにより起動時に値が確定し、途中変更による矛盾を防ぎます。
-- 倍率の最大値を 1000 から 10000 に引き上げました。
+Date: 03. 02. 2026
+  Changed:
+    - 資源の豊富さの倍率設定(rich-resources-multiplier)を「スタートアップ」設定に変更しました。これにより起動時に値が確定し、途中変更による矛盾を防ぎます。
+    - 倍率の最大値を 1000 から 10000 に引き上げました。
+  Bugfixes:
+    - 既存資源への適用処理で関数定義の順序により発生する可能性があったバグを修正しました(process_apply_queue)。
 
-## バグ修正 (Bugfixes)
-- 既存資源への適用処理で関数定義の順序により発生する可能性があったバグを修正しました(process_apply_queue)。
-
-----------------------------------------------------------------------------------------------------
-
+---------------------------------------------------------------------------------------------------
 Version: 1.2.6
-Date: 2025-09-13
-## 追加 (Added)
-- MOD設定に「既存の鉱石鉱脈にも反映する」チェックボックス（スタートアップ）を追加しました。
-- 上記設定が有効な場合、セーブ読み込み時や構成変更時に、既存の資源パッチへ自動で倍率を適用します（バックグラウンド処理）。
+Date: 13. 09. 2025
+  Added:
+    - MOD設定に「既存の鉱石鉱脈にも反映する」チェックボックス（スタートアップ）を追加しました。
+    - 上記設定が有効な場合、セーブ読み込み時や構成変更時に、既存の資源パッチへ自動で倍率を適用します（バックグラウンド処理）。
+  Changed:
+    - 大規模マップでも安定して処理できるよう、既存資源への適用はキューで分割し、1tickあたり最大32チャンクを処理する方式にしました。
+    - 重複適用を避けるため、unit_numberによる管理とentity.tags（pcallで保護）を併用して処理済み印を付けるようにしました。
+    - 処理完了時にローカライズ済みメッセージで件数を通知します。
+  Bugfixes:
+    - on_nth_tick(1) の完了メッセージ出力時に `game.valid` を参照してクラッシュしていた問題を修正しました。
 
-## 変更 (Changed)
-- 大規模マップでも安定して処理できるよう、既存資源への適用はキューで分割し、1tickあたり最大32チャンクを処理する方式にしました。
-- 重複適用を避けるため、unit_numberによる管理とentity.tags（pcallで保護）を併用して処理済み印を付けるようにしました。
-- 処理完了時にローカライズ済みメッセージで件数を通知します。
-
-## バグ修正 (Bugfixes)
-- on_nth_tick(1) の完了メッセージ出力時に `game.valid` を参照してクラッシュしていた問題を修正しました。
-
-----------------------------------------------------------------------------------------------------
-
+---------------------------------------------------------------------------------------------------
 Version: 1.2.5
-Date: 2025-09-12
-## 改善 (Improvements)
-- キーコンフィグに表示されていた不要なカスタム入力設定を削除しました。
-- 使用されていないGUI関連のコード（スプライト定義、未使用関数）を削除し、コードを簡潔化しました。
+Date: 12. 09. 2025
+  Improvements:
+    - キーコンフィグに表示されていた不要なカスタム入力設定を削除しました。
+    - 使用されていないGUI関連のコード（スプライト定義、未使用関数）を削除し、コードを簡潔化しました。
 
-----------------------------------------------------------------------------------------------------
-
+---------------------------------------------------------------------------------------------------
 Version: 1.2.3
-Date: 2025-09-12
-## コードクリーンアップ (Code Cleanup)
-- 削除されたGUI機能に関連する残存コードを整理しました。
+Date: 12. 09. 2025
+  Code Cleanup:
+    - 削除されたGUI機能に関連する残存コードを整理しました。
 
-----------------------------------------------------------------------------------------------------
-
+---------------------------------------------------------------------------------------------------
 Version: 1.2.2
-Date: 2025-09-11
-## バグ修正 (Bugfixes)
-- タグをサポートしていない資源エンティティに対してentity.tagsにアクセスした際のクラッシュを修正しました。
-- 倍率により4294967295を超える値が生成された際の資源量オーバーフローを修正しました。
-- 同じ資源に対して倍率が複数回適用されるのを防ぐため、重複処理防止機能を追加しました。
-- より安全なタグアクセスのために、pcallによるエラーハンドリングを改善しました。
+Date: 11. 09. 2025
+  Bugfixes:
+    - タグをサポートしていない資源エンティティに対してentity.tagsにアクセスした際のクラッシュを修正しました。
+    - 倍率により4294967295を超える値が生成された際の資源量オーバーフローを修正しました。
+    - 同じ資源に対して倍率が複数回適用されるのを防ぐため、重複処理防止機能を追加しました。
+    - より安全なタグアクセスのために、pcallによるエラーハンドリングを改善しました。
 
-----------------------------------------------------------------------------------------------------
-
+---------------------------------------------------------------------------------------------------
 Version: 1.2.1
-Date: 2025-09-11
-## 機能追加 (Features)
-- 資源倍率機能を追加しました。
-- 既存資源への手動適用ボタンを追加しました。
+Date: 11. 09. 2025
+  Features:
+    - 資源倍率機能を追加しました。
+    - 既存資源への手動適用ボタンを追加しました。
 
-----------------------------------------------------------------------------------------------------
-
+---------------------------------------------------------------------------------------------------
 Version: 1.2.0
-Date: 2025-09-11
-## 追加 (Added)
-- MOD設定に「『既存資源へ適用』ボタンを表示」するチェックボックスを追加しました。
-- 上記設定を有効にすると、ゲーム画面の左上に手動実行ボタンが表示されるようになりました。
-- 手動実行ボタンには、誤操作を防ぐための確認ダイアログを実装しました。
-- MODアイコンとして、バニラの原油アイコンを暂定的に設定しました。
+Date: 11. 09. 2025
+  Added:
+    - MOD設定に「『既存資源へ適用』ボタンを表示」するチェックボックスを追加しました。
+    - 上記設定を有効にすると、ゲーム画面の左上に手動実行ボタンが表示されるようになりました。
+    - 手動実行ボタンには、誤操作を防ぐための確認ダイアログを実装しました。
+    - MODアイコンとして、バニラの原油アイコンを暂定的に設定しました。
+  Changed:
+    - control.luaの構造をリファクタリングし、GUI管理と新しい手動実行ロジックに対応させました。
+    - 既存の資源に倍率を適用する際も、チャンク生成時と同じ内部タグを使用し、一つの資源パッチに処理が重複して行われないように改善しました。
+    - data.luaにボタン用の定義を追加しました。
+    - localeファイルに、新しい設定項目やボタン、確認メッセージ用のテキストを追加しました。
 
-## 変更 (Changed)
-- control.luaの構造をリファクタリングし、GUI管理と新しい手動実行ロジックに対応させました。
-- 既存の資源に倍率を適用する際も、チャンク生成時と同じ内部タグを使用し、一つの資源パッチに処理が重複して行われないように改善しました。
-- data.luaにボタン用の定義を追加しました。
-- localeファイルに、新しい設定項目やボタン、確認メッセージ用のテキストを追加しました。
-
-----------------------------------------------------------------------------------------------------
-
+---------------------------------------------------------------------------------------------------
 Version: 1.1.0
-Date: 2025-09-11
-## 追加 (Added)
-- control.luaファイルを新たに追加し、ゲーム中のイベントを処理できるようにしました。
-- ゲームのプレイ中にMOD設定を変更した場合、その変更が「これから新しく生成されるチャンク」に適用されるようになりました。
+Date: 11. 09. 2025
+  Added:
+    - control.luaファイルを新たに追加し、ゲーム中のイベントを処理できるようにしました。
+    - ゲームのプレイ中にMOD設定を変更した場合、その変更が「これから新しく生成されるチャンク」に適用されるようになりました。
+  Changed:
+    - MOD設定を「スタートアップ」から「ランタイム（グローバル）」に変更し、ゲームの途中で倍率を変更できるようになりました。
+    - MODのコアロジックを、ゲームロード時に一度だけ実行されるdata.luaから、チャンク生成のたびに実行されるcontrol.lua (`on_chunk_generated`イベント) に移行しました。
+    - 各資源パッチに処理が一度しか行われないように、内部的な目印（タグ）を付ける処理を追加しました。
+  Removed:
+    - data.luaに記述されていた、ゲームロード時に資源定義を書き換える処理を削除しました。
 
-## 変更 (Changed)
-- MOD設定を「スタートアップ」から「ランタイム（グローバル）」に変更し、ゲームの途中で倍率を変更できるようになりました。
-- MODのコアロジックを、ゲームロード時に一度だけ実行されるdata.luaから、チャンク生成のたびに実行されるcontrol.lua (`on_chunk_generated`イベント) に移行しました。
-- 各資源パッチに処理が一度しか行われないように、内部的な目印（タグ）を付ける処理を追加しました。
-
-## 削除 (Removed)
-- data.luaに記述されていた、ゲームロード時に資源定義を書き換える処理を削除しました。
-
-----------------------------------------------------------------------------------------------------
-
+---------------------------------------------------------------------------------------------------
 Version: 1.0.0
-Date: 2025-09-11
-## 追加 (Added)
-- 初回リリース。
-- MOD設定（スタートアップ）から、すべての資源（鉱石、原油など）の豊富さ(Richness)を乗算で変更する機能を追加。
-- 他のMODによって追加された資源にも自動で対応。
-- 倍率は1倍から1000倍まで設定可能。
-- 表示言語として、英語と日本語に対応。
+Date: 11. 09. 2025
+  Added:
+    - 初回リリース。
+    - MOD設定（スタートアップ）から、すべての資源（鉱石、原油など）の豊富さ(Richness)を乗算で変更する機能を追加。
+    - 他のMODによって追加された資源にも自動で対応。
+    - 倍率は1倍から1000倍まで設定可能。
+    - 表示言語として、英語と日本語に対応。

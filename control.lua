@@ -172,7 +172,13 @@ script.on_event(defines.events.on_tick, function(event)
     -- 1 Tick以上経過しているか確認 (他MODの生成完了待ち)
     if item.tick < event.tick then
        if item.surface and item.surface.valid then
-          Processor.apply_rich_resources_in_area(item.surface, item.area)
+          -- Create deterministic random generator based on surface seed and chunk position
+          local seed = item.surface.map_gen_settings.seed
+          -- Simple hash combination for unique chunk seed
+          local unique_seed = (seed + item.area.left_top.x * 0x1F1F + item.area.left_top.y * 0x7373) % 0x100000000
+          local rng = game.create_random_generator(unique_seed)
+          
+          Processor.apply_rich_resources_in_area(item.surface, item.area, rng)
        end
        table.remove(queue, i)
     end

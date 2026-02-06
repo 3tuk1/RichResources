@@ -7,8 +7,15 @@ data:extend({
     minimum_value = 0.001,
     maximum_value = 1000000,
     order = "a-1"
-  },
-   {
+  },  {
+    type = "double-setting",
+    name = "rich-resources-randomness-factor",
+    setting_type = "runtime-global",
+    default_value = 0.0,
+    minimum_value = 0.0,
+    maximum_value = 1.0,
+    order = "a-2"
+  },   {
      type = "bool-setting",
      name = "richresources-apply-to-existing-ores",
      setting_type = "runtime-global",
