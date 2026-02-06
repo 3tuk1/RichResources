@@ -81,7 +81,7 @@ end)
 
 -- 設定変更時（実行時）
 script.on_event(defines.events.on_runtime_mod_setting_changed, function(event)
-  if not global.richResources then return end
+  if not global or not global.richResources then return end
   
   if event.setting == "rich-resources-multiplier" then
     global.richResources.multiplier = settings.global["rich-resources-multiplier"].value
