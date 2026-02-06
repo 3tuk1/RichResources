@@ -1,0 +1,9 @@
+{
+  "name": "RichResources",
+  "version": "1.4.2",
+  "title": "Rich Resources",
+  "author": "sirokoke",
+  "factorio_version": "2.0",
+  "dependencies": ["base >= 2.0", "? space-age", "? space-exploration"],
+  "description": "All resource richness is multiplied by a configurable value. You can change the multiplier in the mod settings."
+}
