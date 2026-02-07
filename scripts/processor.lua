@@ -2,7 +2,7 @@ local Utils = require("scripts.utils")
 local Core = require("scripts.core")
 local Processor = {}
 
-function Processor.apply_rich_resources_in_area(surface, area)
+function Processor.apply_rich_resources_in_area(surface, area, rng)
   if not surface or not surface.valid then return end
   if not global or not global.richResources then return end
   
@@ -42,7 +42,8 @@ function Processor.apply_rich_resources_in_area(surface, area)
         end
       else
         -- 未処理なので倍率を適用 (Coreロジックを使用)
-        Core.apply_multiplier(entity, multiplier)
+        -- Pass rng if available
+        Core.apply_multiplier(entity, multiplier, rng)
       end
     end
   end
