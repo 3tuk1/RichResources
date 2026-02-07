@@ -1,9 +1,9 @@
 {
   "name": "RichResources",
-  "version": "1.5.1",
-  "title": "Rich Resources",
+  "version": "1.5.2",
+  "title": "Dynamic Resource Control",
   "author": "sirokoke",
   "factorio_version": "2.0",
   "dependencies": ["base >= 2.0", "? space-age", "? space-exploration"],
-  "description": "A lightweight mod that dynamically multiplies all resource richness—including existing chunks and modded ores—featuring distance scaling, depletion recovery, and runtime controls for infinite abundance or scarcity.\nすべての資源（MOD・既存エリア含む）の埋蔵量を動的に乗算し、距離ボーナスや枯渇資源の復活、希少化までをゲーム中に再起動なしで自在に調整できる軽量MODです。"
+  "description": "Dynamic Resource Control (Old: Rich Resources)\n A lightweight mod that dynamically multiplies all resource richness—including existing chunks and modded ores—featuring distance scaling, depletion recovery, and runtime controls for infinite abundance or scarcity.\nすべての資源（MOD・既存エリア含む）の埋蔵量を動的に乗算し、距離ボーナスや枯渇資源の復活、希少化までをゲーム中に再起動なしで自在に調整できる軽量MODです。"
 }
