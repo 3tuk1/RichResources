@@ -23,6 +23,24 @@ function Worker.process_apply_queue(event)
         script.on_nth_tick(1, nil)
         global.richResources.apply_queue = nil
         global.richResources.existing_applied = true
+        
+        -- 状態をリセット
+        global.richResources.job_type = nil
+        global.richResources.job_multiplier = nil
+        
+        -- もし予約タスクがあればスキップ直後に開始する
+        if global.richResources.pending_job then
+            local job = global.richResources.pending_job
+            global.richResources.pending_job = nil
+            
+            global.richResources.generation = job.generation
+            global.richResources.job_type = job.type
+            global.richResources.job_multiplier = job.multiplier
+            global.richResources.existing_applied = false
+            
+            game.print("[RichResources] Starting queued task: " .. job.type .. " x" .. job.multiplier)
+            Worker.start_apply_to_existing_resources()
+        end
         return
     end
   end

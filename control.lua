@@ -94,56 +94,56 @@ script.on_event(defines.events.on_runtime_mod_setting_changed, function(event)
       if global.richResources.apply_queue then
         global.richResources.apply_queue = nil
         script.on_nth_tick(1, nil)
+        
+        --2行を追加して、予約と現在のジョブ状態もリセットする
+        global.richResources.pending_job = nil 
+        global.richResources.job_type = nil
+        
         game.print("RichResources: Existing ore application stopped.")
       end
     end
   elseif event.setting == "richresources-reset-processed-list" then
-    if settings.global["richresources-reset-processed-list"].value then
-       -- Generation Increment Reset Strategy
-       global.richResources.generation = (global.richResources.generation or 1) + 1
-       global.richResources.processed_entities = {}
-       game.print("[RichResources] Processed state reset. Generation: " .. global.richResources.generation)
+    -- チェックのON/OFFに関わらず、設定が「操作（変更）された」こと自体をトリガーにする
+    global.richResources.generation = (global.richResources.generation or 1) + 1
+    global.richResources.processed_entities = {}
+    game.print("[RichResources] Processed state reset. Generation: " .. global.richResources.generation)
 
-       -- If auto-apply is ON, restart it
-       if settings.global["richresources-apply-to-existing-ores"].value then
-          global.richResources.existing_applied = false
-          Worker.start_apply_to_existing_resources()
-          game.print("[RichResources] Re-applying to existing resources...")
-       end
-
-       -- Auto-reset the toggle switch to false
-       settings.global["richresources-reset-processed-list"] = {value = false}
-    end
-  elseif event.setting == "richresources-apply-maintenance" then
-    if settings.global["richresources-apply-maintenance"].value then
-       -- Maintenance Mode: Apply secondary multiplier to ALREADY PROCESSED entities
-       local maint_mult = settings.global["rich-resources-maintenance-multiplier"].value
-       game.print("[RichResources] Applying maintenance multiplier x" .. maint_mult .. " to processed ores...")
-
-       -- Set job mode and parameters
-       local job_params = {
-          type = "maintenance",
-          multiplier = maint_mult,
-          generation = (global.richResources.generation or 1) + 1
-       }
+    -- If auto-apply is ON, restart it
+    if settings.global["richresources-apply-to-existing-ores"].value then
+       global.richResources.existing_applied = false
        
-       -- Check if queue is running
-       if global.richResources.apply_queue and #global.richResources.apply_queue > 0 then
-           game.print("[RichResources] Task queued. Maintenance will start after current task completes.")
-           global.richResources.pending_job = job_params
-       else
-           -- Start immediately
-           global.richResources.generation = job_params.generation
-           global.richResources.job_type = job_params.type
-           global.richResources.job_multiplier = job_params.multiplier
-           global.richResources.existing_applied = false
-           
+       -- ※キューが空の時だけ再スタートさせる（重複実行エラー防止）
+       if not global.richResources.apply_queue or #global.richResources.apply_queue == 0 then
            Worker.start_apply_to_existing_resources()
        end
-
-       -- Auto-reset switch
-       settings.global["richresources-apply-maintenance"] = {value = false}
+       game.print("[RichResources] Re-applying to existing resources...")
     end
+    
+    -- スクリプトからの強制書き換え（自動オフ）は削除します
+  elseif event.setting == "richresources-apply-maintenance" then
+    -- if settings.global["richresources-apply-maintenance"].value then を削除
+    local maint_mult = settings.global["rich-resources-maintenance-multiplier"].value
+    game.print("[RichResources] Applying maintenance multiplier x" .. maint_mult .. " to processed ores...")
+
+    local job_params = {
+       type = "maintenance",
+       multiplier = maint_mult,
+       generation = (global.richResources.generation or 1) + 1
+    }
+       
+    if global.richResources.apply_queue and #global.richResources.apply_queue > 0 then
+        game.print("[RichResources] Task queued. Maintenance will start after current task completes.")
+        global.richResources.pending_job = job_params
+    else
+        global.richResources.generation = job_params.generation
+        global.richResources.job_type = job_params.type
+        global.richResources.job_multiplier = job_params.multiplier
+        global.richResources.existing_applied = false
+           
+        Worker.start_apply_to_existing_resources()
+    end
+
+    -- settings.global["richresources-apply-maintenance"] = {value = false} を削除
   end
 end)
 

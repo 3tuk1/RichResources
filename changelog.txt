@@ -1,4 +1,24 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.5.4
+Date: 28. 02. 2026
+  Changes:
+    - Fixed a bug where pending tasks were not cleared when cancelling "Apply to existing ore patches".
+    - Fixed a bug where queued maintenance or other tasks were not being executed if the current multiplier was 1.0 (skipped).
+  変更:
+    - 「既存の鉱石鉱脈にも反映する」をオフにして中断した際に、バックグラウンドに残っている予約タスクが消去されないバグを修正しました。
+    - 現在の資源倍率が1.0（スキップ）の場合に、予約されていたメンテナンス等のタスクが実行されずに止まってしまうバグを修正しました。
+
+---------------------------------------------------------------------------------------------------
+Version: 1.5.3
+Date: 28. 02. 2026
+  Changes:
+    - Changed "Richresources-reset-processed-list" and "Apply maintenance" settings trigger logic to toggle-based instead of auto-resetting. This fixes a synchronization bug where settings could get stuck.
+    - Updated setting descriptions in locale files.
+  変更:
+    - 「処理済みリストのリセット」と「メンテナンス適用」の設定を、自動オフ方式からトグル（切り替え）方式に変更しました。これにより、設定の同期ズレにより変更が適用されなくなるバグが解消されます。
+    - 設定の説明文（日本語/英語）を更新しました。
+
+---------------------------------------------------------------------------------------------------
 Version: 1.5.2
 Date: 07. 02. 2026
   Changes:
