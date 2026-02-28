@@ -1,4 +1,32 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.0.0
+Date: 28. 02. 2026
+  Changes:
+    - Updated for Factorio 2.0: Migrated all `global` variables to `storage`.
+    - Fixed desync issues: Ensured `on_nth_tick` is registered unconditionally on load and uses deterministic RNG.
+    - Added runtime setting updates: Changed multiplier settings now apply immediately during gameplay.
+    - Improved stability: Fixed potential crashes with empty task queues and `nil` references.
+  変更:
+    - Factorio 2.0 対応: すべての `global` 変数を `storage` に移行しました。
+    - 同期ズレ（Desync）の修正: `on_nth_tick` をロード時に無条件で登録し、決定論的な乱数生成を使用するようにしました。
+    - 実行時設定の反映: ゲーム中に倍率設定を変更した際、即座に反映されるようにしました。
+    - 安定性の向上: タスクキューが空になった際の `nil` 参照エラーなどを修正しました。
+
+---------------------------------------------------------------------------------------------------
+Version: 1.5.5
+Date: 28. 02. 2026
+  Changes:
+    - Major optimization: Changed internal tracking from entity-based to chunk-based system. This drastically reduces save file size and load times.
+    - Added "Finite Resource Minimum Base Amount" setting (`rich-resources-finite-min-base`).
+    - Fixed multiplayer desync issues by implementing deterministic random number generation based on map coordinates.
+    - Improved boundary checks to prevent double-processing of resources spanning across chunks.
+  変更:
+    - 大幅な最適化: 内部的な処理済み管理をエンティティIDベースからチャンク座標ベースに変更しました。これによりセーブデータ容量とロード時間が劇的に削減されます。
+    - 「有限資源の最小ベース量」設定 (`rich-resources-finite-min-base`) を追加しました。
+    - 座標に基づいた決定論的な乱数生成を実装し、マルチプレイ時の同期ズレ（Desync）を修正しました。
+    - チャンク境界を跨ぐ鉱石が二重に処理されてしまう問題を修正しました。
+
+---------------------------------------------------------------------------------------------------
 Version: 1.5.4
 Date: 28. 02. 2026
   Changes:

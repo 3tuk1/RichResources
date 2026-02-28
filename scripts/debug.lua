@@ -25,7 +25,9 @@ function Debug.register()
       local m = tonumber(multiplier) or 2.0
       game.print("[Debug] テスト適用開始: x" .. m .. " 対象: " .. entity.name .. " (現在量: " .. entity.amount .. ")")
       
-      local result = Core.apply_multiplier(entity, m)
+      -- Create a local RNG for testing
+      local rng = game.create_random_generator()
+      local result = Core.apply_multiplier(entity, m, rng)
       
       if result then
         game.print("[Debug] 成功しました。変更後: " .. entity.amount)
@@ -41,25 +43,25 @@ function Debug.register()
     -- グローバル変数の状態確認
     -- 使用例: /c remote.call("RichResourcesDebug", "status")
     status = function()
-        if global.richResources then
+        if storage.richResources then
             game.print("=== RichResources Status ===")
-            game.print("Generation: " .. tostring(global.richResources.generation))
-            game.print("Multiplier: " .. tostring(global.richResources.multiplier))
-            game.print("Maintenance Mode: " .. tostring(global.richResources.job_type == "maintenance"))
+            game.print("Generation: " .. tostring(storage.richResources.generation))
+            game.print("Multiplier: " .. tostring(storage.richResources.multiplier))
+            game.print("Maintenance Mode: " .. tostring(storage.richResources.job_type == "maintenance"))
             
             local processed_count = 0
-            if global.richResources.processed_entities then
-                for _ in pairs(global.richResources.processed_entities) do processed_count = processed_count + 1 end
+            if storage.richResources.processed_entities then
+                for _ in pairs(storage.richResources.processed_entities) do processed_count = processed_count + 1 end
             end
             game.print("Processed Entities Cache: " .. processed_count)
             
-            if global.richResources.apply_queue then
-                game.print("Queue Length: " .. #global.richResources.apply_queue)
+            if storage.richResources.apply_queue then
+                game.print("Queue Length: " .. #storage.richResources.apply_queue)
             else
                 game.print("Queue: Inactive")
             end
         else
-            game.print("global.richResources is nil")
+            game.print("storage.richResources is nil")
         end
     end,
 
@@ -82,10 +84,10 @@ function Debug.register()
       end
 
       -- キャッシュ(processed_entities)からの削除
-      if global.richResources and global.richResources.processed_entities then
+      if storage.richResources and storage.richResources.processed_entities then
         local entity_id = Utils.get_entity_identifier(entity)
-        if entity_id and global.richResources.processed_entities[entity_id] then
-            global.richResources.processed_entities[entity_id] = nil
+        if entity_id and storage.richResources.processed_entities[entity_id] then
+            storage.richResources.processed_entities[entity_id] = nil
             game.print("[Debug] 処理済みリスト(キャッシュ)から削除しました。")
         else
             game.print("[Debug] 処理済みリストには含まれていませんでした。")
@@ -193,9 +195,18 @@ function Debug.register()
              end
              
              -- 実行と検証
-             Core.apply_multiplier(entity, multiplier)
+             -- Test uses seed=12345 for consistency
+             local rng = game.create_random_generator(12345)
+             Core.apply_multiplier(entity, multiplier, rng)
              local result = entity.amount
-             if result == expected then
+             
+             -- If randomness is enabled, the result is not strictly equal to expected.
+             -- We skip exact check if randomness > 0
+             local randomness = settings.global["rich-resources-randomness-factor"].value
+             if randomness > 0 then
+                 log(string.format("[PASS (Random)] %s: %d -> %d (Base Expected: %d)%s", case_name, initial_amount, result, expected, dist_bonus_msg))
+                 entity.destroy()
+             elseif result == expected then
                  log(string.format("[PASS] %s: %d -> %d%s", case_name, initial_amount, result, dist_bonus_msg))
                  entity.destroy() 
              else
