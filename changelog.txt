@@ -1,4 +1,26 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.0.2
+Date: 28. 02. 2026
+  Changes:
+    - Restored missing runtime setting handlers for manually resetting processed chunks, applying maintenance multiplier, and toggling existing ore application. These were accidentally removed during recent refactoring.
+    - Fixed a potential crash with missing `end` statement in `worker.lua`.
+  変更:
+    - 処理済みチャンクリストの手動リセット、メンテナンス倍率の適用、既存鉱石への適用切り替え機能が、リファクタリング中に誤って削除されていたため復元しました。
+    - `worker.lua` の `end` 不足によるクラッシュの可能性を修正しました。
+
+---------------------------------------------------------------------------------------------------
+Version: 2.0.1
+Date: 28. 02. 2026
+  Changes:
+    - Fixed a crash when the task queue becomes empty (`attempt to get length of global 'queue'`).
+    - Fixed a freeze issue on large maps when applying settings to existing chunks by processing them incrementally.
+    - Fixed settings changes (`rich-resources-multiplier`) not applying immediately during gameplay.
+  変更:
+    - タスクキューが空の状態で長さ取得を行おうとしてクラッシュするバグ (`attempt to get length of global 'queue'`) を修正しました。
+    - 既存チャンクへの設定適用時に、マップが巨大だとフリーズする問題を、分割処理により修正しました。
+    - ゲームプレイ中に `rich-resources-multiplier` の設定を変更しても即座に反映されない問題を修正しました。
+
+---------------------------------------------------------------------------------------------------
 Version: 2.0.0
 Date: 28. 02. 2026
   Changes:

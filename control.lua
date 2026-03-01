@@ -56,6 +56,45 @@ script.on_event(defines.events.on_runtime_mod_setting_changed, function(event)
   if event.setting == "rich-resources-multiplier" then
     storage.richResources.multiplier = settings.global["rich-resources-multiplier"].value
     game.print("[RichResources] Multiplier updated to: " .. storage.richResources.multiplier)
+
+  elseif event.setting == "richresources-apply-to-existing-ores" then
+    if settings.global["richresources-apply-to-existing-ores"].value then
+      Worker.start_apply_to_existing_resources()
+    else
+      -- 停止時はキューをクリアする
+      storage.richResources.apply_queue = {}
+      storage.richResources.pending_job = nil 
+      storage.richResources.job_type = nil
+      game.print("[RichResources] Stops applying to existing ores.")
+    end
+
+  elseif event.setting == "richresources-reset-processed-list" then
+    storage.richResources.generation = (storage.richResources.generation or 1) + 1
+    storage.richResources.processed_chunks = {} 
+    game.print("[RichResources] Processed chunks list reset. Generation: " .. storage.richResources.generation)
+    if settings.global["richresources-apply-to-existing-ores"].value then
+       Worker.start_apply_to_existing_resources()
+    end
+
+  elseif event.setting == "richresources-apply-maintenance" then
+    local maint_mult = settings.global["rich-resources-maintenance-multiplier"].value
+    game.print("[RichResources] Queueing maintenance task (x" .. maint_mult .. ")...")
+
+    local job_params = {
+       type = "maintenance",
+       multiplier = maint_mult,
+       generation = (storage.richResources.generation or 1) + 1
+    }
+    
+    if storage.richResources.apply_queue and #storage.richResources.apply_queue > 0 then
+        storage.richResources.pending_job = job_params
+    else
+        storage.richResources.generation = job_params.generation
+        storage.richResources.job_type = job_params.type
+        storage.richResources.job_multiplier = job_params.multiplier
+        storage.richResources.existing_applied = false
+        Worker.start_apply_to_existing_resources()
+    end
   end
 end)
 
