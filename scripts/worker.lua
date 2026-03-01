@@ -31,7 +31,7 @@ function Worker.process_apply_queue(event)
             storage.richResources.job_type = job.type
             storage.richResources.job_multiplier = job.multiplier
             storage.richResources.existing_applied = false
-            game.print("[RichResources] Starting queued task: " .. (job.type or "unknown") .. " x" .. (job.multiplier or 1))
+            game.print({"message.rich-resources-started-queued-task", (job.type or "unknown"), (job.multiplier or 1)})
             Worker.start_apply_to_existing_resources()
         end
         return
@@ -42,8 +42,19 @@ function Worker.process_apply_queue(event)
   storage.richResources.processed_chunks = storage.richResources.processed_chunks or {} 
   
   -- Process a batch of chunks
-  -- 1ティックあたりの処理数を設定（高負荷防止）
-  local tasks_per_tick = 5 
+  -- 設定から最大処理数を取得
+  local max_tasks = (settings.global["richresources-tasks-per-tick"] and settings.global["richresources-tasks-per-tick"].value) or 50
+
+  -- 動的スケーリング：目標10秒(600ティック)で終わらせる
+  -- 例: 残り60000チャンクなら 60000/600 = 100チャンク/ティック
+  local target_ticks = 600
+  local calculated_tasks = math.ceil(#queue / target_ticks)
+  
+  -- 最低5、設定値を上限としてクランプ。
+  -- ただし、max_tasks が 5未満の場合もあるので考慮（設定で1にされた場合など）
+  local lower_limit = math.min(5, max_tasks) 
+  local tasks_per_tick = math.max(lower_limit, math.min(max_tasks, calculated_tasks))
+
   local to_process = math.min(tasks_per_tick, #queue)
 
   for i = 1, to_process do
@@ -75,23 +86,28 @@ function Worker.process_apply_queue(event)
               right_bottom = {x = (job.x + 1) * CHUNK_SIZE, y = (job.y + 1) * CHUNK_SIZE}
             }
             
-            -- 同期ズレ防止用のRNG生成
-            local seed = 12345
-            if surface.map_gen_settings and surface.map_gen_settings.seed then
-                seed = surface.map_gen_settings.seed
-            end
-            local unique_seed = (seed + job.x * 0x1F1F + job.y * 0x7373) % 0x100000000
-            local rng = game.create_random_generator(unique_seed)
+            -- 最適化: 先に資源を検索し、存在する場合のみRNG生成等の重い処理を行う
+            local entities = surface.find_entities_filtered{area = area, type = "resource"}
+            
+            if #entities > 0 then
+                -- 同期ズレ防止用のRNG生成
+                local seed = 12345
+                if surface.map_gen_settings and surface.map_gen_settings.seed then
+                    seed = surface.map_gen_settings.seed
+                end
+                local unique_seed = (seed + job.x * 0x1F1F + job.y * 0x7373) % 0x100000000
+                local rng = game.create_random_generator(unique_seed)
 
-            for _, entity in pairs(surface.find_entities_filtered{area = area, type = "resource"}) do
-              local pos = entity.position 
-              if pos.x >= area.left_top.x and pos.x < area.right_bottom.x and
-                 pos.y >= area.left_top.y and pos.y < area.right_bottom.y then
-                 
-                 if Core.apply_multiplier(entity, multiplier, rng) then
-                     storage.richResources.apply_processed_count = (storage.richResources.apply_processed_count or 0) + 1
-                 end
-              end
+                for _, entity in pairs(entities) do
+                  local pos = entity.position 
+                  if pos.x >= area.left_top.x and pos.x < area.right_bottom.x and
+                     pos.y >= area.left_top.y and pos.y < area.right_bottom.y then
+                     
+                     if Core.apply_multiplier(entity, multiplier, rng) then
+                         storage.richResources.apply_processed_count = (storage.richResources.apply_processed_count or 0) + 1
+                     end
+                  end
+                end
             end
             
             -- Mark chunk as processed for this generation
@@ -112,7 +128,7 @@ function Worker.process_apply_queue(event)
     storage.richResources.job_type = nil
     storage.richResources.job_multiplier = nil
     
-    game.print("[RichResources] Finished applying to existing chunks.")
+    game.print({"message.rich-resources-finished-applying"})
     
     if storage.richResources.pending_job then
         local next_job = storage.richResources.pending_job
@@ -120,7 +136,7 @@ function Worker.process_apply_queue(event)
         storage.richResources.job_type = next_job.type
         storage.richResources.job_multiplier = next_job.multiplier
         storage.richResources.existing_applied = false  
-        game.print("[RichResources] Starting next queued task: " .. tostring(next_job.type))
+        game.print({"message.rich-resources-starting-next-job", tostring(next_job.type)})
         Worker.start_apply_to_existing_resources()
     end
   end
@@ -131,7 +147,7 @@ function Worker.start_apply_to_existing_resources()
   -- キューが空でない場合は、追加ジョブとして処理するかわかるべきだが、
   -- 簡易化のため既存キューがある場合は実行しない、あるいは再実行扱いにする
   if storage.richResources.apply_queue and #storage.richResources.apply_queue > 0 then 
-      game.print("[RichResources] Job already running.")
+      game.print({"message.rich-resources-job-already-running"})
       return false 
   end
 
@@ -155,7 +171,7 @@ function Worker.start_apply_to_existing_resources()
   storage.richResources.apply_queue = queue
   storage.richResources.apply_processed_count = 0
   
-  game.print("既存リソースの再計算を開始しました: " .. #queue .. " チャンク")
+  game.print({"message.rich-resources-recalculation-started", #queue})
   return true
 end
 

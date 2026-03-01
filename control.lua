@@ -55,7 +55,7 @@ script.on_event(defines.events.on_runtime_mod_setting_changed, function(event)
   
   if event.setting == "rich-resources-multiplier" then
     storage.richResources.multiplier = settings.global["rich-resources-multiplier"].value
-    game.print("[RichResources] Multiplier updated to: " .. storage.richResources.multiplier)
+    game.print({"message.rich-resources-multiplier-updated", storage.richResources.multiplier})
 
   elseif event.setting == "richresources-apply-to-existing-ores" then
     if settings.global["richresources-apply-to-existing-ores"].value then
@@ -65,20 +65,20 @@ script.on_event(defines.events.on_runtime_mod_setting_changed, function(event)
       storage.richResources.apply_queue = {}
       storage.richResources.pending_job = nil 
       storage.richResources.job_type = nil
-      game.print("[RichResources] Stops applying to existing ores.")
+      game.print({"message.rich-resources-stops-applying"})
     end
 
   elseif event.setting == "richresources-reset-processed-list" then
     storage.richResources.generation = (storage.richResources.generation or 1) + 1
     storage.richResources.processed_chunks = {} 
-    game.print("[RichResources] Processed chunks list reset. Generation: " .. storage.richResources.generation)
+    game.print({"message.rich-resources-processed-chunks-reset", storage.richResources.generation})
     if settings.global["richresources-apply-to-existing-ores"].value then
        Worker.start_apply_to_existing_resources()
     end
 
   elseif event.setting == "richresources-apply-maintenance" then
     local maint_mult = settings.global["rich-resources-maintenance-multiplier"].value
-    game.print("[RichResources] Queueing maintenance task (x" .. maint_mult .. ")...")
+    game.print({"message.rich-resources-queueing-maintenance", maint_mult})
 
     local job_params = {
        type = "maintenance",

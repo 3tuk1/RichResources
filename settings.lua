@@ -48,6 +48,15 @@
      order = "a[richresources]-d2[finite-min-base]"
    },
    {
+     type = "int-setting",
+     name = "richresources-tasks-per-tick",
+     setting_type = "runtime-global",
+     default_value = 50,
+     minimum_value = 1,
+     maximum_value = 2000,
+     order = "a[richresources]-e[tasks-per-tick]"
+   },
+   {
      type = "double-setting",
      name = "rich-resources-maintenance-multiplier",
      setting_type = "runtime-global",
