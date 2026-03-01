@@ -1,4 +1,4 @@
-data:extend({
+﻿data:extend({
   {
     type = "double-setting",
     name = "rich-resources-multiplier",
@@ -33,35 +33,28 @@ data:extend({
      type = "int-setting",
      name = "rich-resources-infinite-min-base",
      setting_type = "runtime-global",
-     default_value = 300000,
-     minimum_value = 1,
-     maximum_value = 1000000000,
-     order = "a[richresources]-d[infinite-min-base]"
-   },
-   {
-     type = "double-setting",
-     name = "rich-resources-maintenance-multiplier",
-     setting_type = "runtime-global",
-     default_value = 1.0,
-     minimum_value = 0.001,
-     maximum_value = 1000,
-     order = "a[richresources]-e[maintenance-multiplier]"
-   },
-   {
-     type = "bool-setting",
-     name = "richresources-apply-maintenance",
-     setting_type = "runtime-global",
-     default_value = false,
-     order = "a[richresources]-f[apply-maintenanc"
-   },
-   {
-     type = "int-setting",
-     name = "rich-resources-infinite-min-base",
-     setting_type = "runtime-global",
      default_value = 30000,
      minimum_value = 1,
      maximum_value = 1000000000,
      order = "a[richresources]-d[infinite-min-base]"
+   },
+   {
+     type = "int-setting",
+     name = "rich-resources-finite-min-base",
+     setting_type = "runtime-global",
+     default_value = 1,
+     minimum_value = 1,
+     maximum_value = 1000000000,
+     order = "a[richresources]-d2[finite-min-base]"
+   },
+   {
+     type = "int-setting",
+     name = "richresources-tasks-per-tick",
+     setting_type = "runtime-global",
+     default_value = 50,
+     minimum_value = 1,
+     maximum_value = 2000,
+     order = "a[richresources]-e[tasks-per-tick]"
    },
    {
      type = "double-setting",

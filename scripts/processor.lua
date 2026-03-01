@@ -1,52 +1,38 @@
-local Utils = require("scripts.utils")
-local Core = require("scripts.core")
+﻿local Core = require("scripts.core")
 local Processor = {}
 
 function Processor.apply_rich_resources_in_area(surface, area, rng)
   if not surface or not surface.valid then return end
-  if not global or not global.richResources then return end
+  if not storage or not storage.richResources then return end
   
-  local multiplier = global.richResources.multiplier or 1
+  local multiplier = storage.richResources.multiplier or 1
   if multiplier == 1 then return end
 
-  local max_amount = 4294967295 
+  local surface_idx = surface.index
+  local cx = math.floor(area.left_top.x / 32)
+  local cy = math.floor(area.left_top.y / 32)
+  local chunk_id = cx .. "_" .. cy
   
-  for _, entity in pairs(surface.find_entities_filtered{area = area, type = "resource"}) do
-    local entity_id = Utils.get_entity_identifier(entity)
-    
-    -- 処理済みかチェック
-    if entity_id and global.richResources.processed_entities[entity_id] then
-      -- 既に処理済み、スキップ
-    else
-      -- pcallを使ってtagsへのアクセスを安全に行う
-      local success, tags = pcall(function() return entity.tags end)
-      
-      local already = false
-      if success and tags then
-         local current_gen = global.richResources.generation or 1
-         local entity_gen = tags.rich_resources_gen
-         -- Old tag compatibility
-         if not entity_gen and tags.rich_resources_applied then
-            entity_gen = 1
-         end
-         
-         if entity_gen and entity_gen >= current_gen then
-            already = true
-         end
-      end
+  storage.richResources.processed_chunks = storage.richResources.processed_chunks or {}
+  storage.richResources.processed_chunks[surface_idx] = storage.richResources.processed_chunks[surface_idx] or {}
+  
+  local current_gen = storage.richResources.generation or 1
+  local chunk_gen = storage.richResources.processed_chunks[surface_idx][chunk_id] or 0
+  
+  if chunk_gen >= current_gen then return end -- この世代で既に処理済み
 
-      if already then
-        -- tagsで既に処理済みが確認できる場合
-        if entity_id then
-          global.richResources.processed_entities[entity_id] = true
-        end
-      else
-        -- 未処理なので倍率を適用 (Coreロジックを使用)
-        -- Pass rng if available
-        Core.apply_multiplier(entity, multiplier, rng)
-      end
+  for _, entity in pairs(surface.find_entities_filtered{area = area, type = "resource"}) do
+    local pos = entity.position
+    -- エンティティの中心が厳密にチャンク内にある場合のみ処理（境界線での重複処理を防止）
+    if pos.x >= area.left_top.x and pos.x < area.right_bottom.x and
+       pos.y >= area.left_top.y and pos.y < area.right_bottom.y then
+       
+       Core.apply_multiplier(entity, multiplier, rng)
     end
   end
+  
+  -- チャンクを処理済みとしてマーク
+  storage.richResources.processed_chunks[surface_idx][chunk_id] = current_gen
 end
 
 return Processor

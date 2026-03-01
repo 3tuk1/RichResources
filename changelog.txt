@@ -1,4 +1,94 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.0.4
+Date: 01. 03. 2026
+  Changes:
+    - Added dynamic chunk processing.
+    - Optimized processing by skipping empty chunks.
+    - Added Chinese localization.
+  変更:
+    - 動的なチャンク処理を追加しました。
+    - 空のチャンクをスキップするようにして、処理を最適化しました。
+    - 中国語のローカライズを追加しました。
+
+---------------------------------------------------------------------------------------------------
+Version: 2.0.2
+Date: 28. 02. 2026
+  Changes:
+    - Restored missing runtime setting handlers for manually resetting processed chunks, applying maintenance multiplier, and toggling existing ore application. These were accidentally removed during recent refactoring.
+    - Fixed a potential crash with missing `end` statement in `worker.lua`.
+  変更:
+    - 処理済みチャンクリストの手動リセット、メンテナンス倍率の適用、既存鉱石への適用切り替え機能が、リファクタリング中に誤って削除されていたため復元しました。
+    - `worker.lua` の `end` 不足によるクラッシュの可能性を修正しました。
+
+---------------------------------------------------------------------------------------------------
+Version: 2.0.1
+Date: 28. 02. 2026
+  Changes:
+    - Fixed a crash when the task queue becomes empty (`attempt to get length of global 'queue'`).
+    - Fixed a freeze issue on large maps when applying settings to existing chunks by processing them incrementally.
+    - Fixed settings changes (`rich-resources-multiplier`) not applying immediately during gameplay.
+  変更:
+    - タスクキューが空の状態で長さ取得を行おうとしてクラッシュするバグ (`attempt to get length of global 'queue'`) を修正しました。
+    - 既存チャンクへの設定適用時に、マップが巨大だとフリーズする問題を、分割処理により修正しました。
+    - ゲームプレイ中に `rich-resources-multiplier` の設定を変更しても即座に反映されない問題を修正しました。
+
+---------------------------------------------------------------------------------------------------
+Version: 2.0.0
+Date: 28. 02. 2026
+  Changes:
+    - Updated for Factorio 2.0: Migrated all `global` variables to `storage`.
+    - Fixed desync issues: Ensured `on_nth_tick` is registered unconditionally on load and uses deterministic RNG.
+    - Added runtime setting updates: Changed multiplier settings now apply immediately during gameplay.
+    - Improved stability: Fixed potential crashes with empty task queues and `nil` references.
+  変更:
+    - Factorio 2.0 対応: すべての `global` 変数を `storage` に移行しました。
+    - 同期ズレ（Desync）の修正: `on_nth_tick` をロード時に無条件で登録し、決定論的な乱数生成を使用するようにしました。
+    - 実行時設定の反映: ゲーム中に倍率設定を変更した際、即座に反映されるようにしました。
+    - 安定性の向上: タスクキューが空になった際の `nil` 参照エラーなどを修正しました。
+
+---------------------------------------------------------------------------------------------------
+Version: 1.5.5
+Date: 28. 02. 2026
+  Changes:
+    - Major optimization: Changed internal tracking from entity-based to chunk-based system. This drastically reduces save file size and load times.
+    - Added "Finite Resource Minimum Base Amount" setting (`rich-resources-finite-min-base`).
+    - Fixed multiplayer desync issues by implementing deterministic random number generation based on map coordinates.
+    - Improved boundary checks to prevent double-processing of resources spanning across chunks.
+  変更:
+    - 大幅な最適化: 内部的な処理済み管理をエンティティIDベースからチャンク座標ベースに変更しました。これによりセーブデータ容量とロード時間が劇的に削減されます。
+    - 「有限資源の最小ベース量」設定 (`rich-resources-finite-min-base`) を追加しました。
+    - 座標に基づいた決定論的な乱数生成を実装し、マルチプレイ時の同期ズレ（Desync）を修正しました。
+    - チャンク境界を跨ぐ鉱石が二重に処理されてしまう問題を修正しました。
+
+---------------------------------------------------------------------------------------------------
+Version: 1.5.4
+Date: 28. 02. 2026
+  Changes:
+    - Fixed a bug where pending tasks were not cleared when cancelling "Apply to existing ore patches".
+    - Fixed a bug where queued maintenance or other tasks were not being executed if the current multiplier was 1.0 (skipped).
+  変更:
+    - 「既存の鉱石鉱脈にも反映する」をオフにして中断した際に、バックグラウンドに残っている予約タスクが消去されないバグを修正しました。
+    - 現在の資源倍率が1.0（スキップ）の場合に、予約されていたメンテナンス等のタスクが実行されずに止まってしまうバグを修正しました。
+
+---------------------------------------------------------------------------------------------------
+Version: 1.5.3
+Date: 28. 02. 2026
+  Changes:
+    - Changed "Richresources-reset-processed-list" and "Apply maintenance" settings trigger logic to toggle-based instead of auto-resetting. This fixes a synchronization bug where settings could get stuck.
+    - Updated setting descriptions in locale files.
+  変更:
+    - 「処理済みリストのリセット」と「メンテナンス適用」の設定を、自動オフ方式からトグル（切り替え）方式に変更しました。これにより、設定の同期ズレにより変更が適用されなくなるバグが解消されます。
+    - 設定の説明文（日本語/英語）を更新しました。
+
+---------------------------------------------------------------------------------------------------
+Version: 1.5.2
+Date: 07. 02. 2026
+  Changes:
+    - Corrected title and description.
+  変更:
+    - タイトルと説明文の修整。
+
+---------------------------------------------------------------------------------------------------
 Version: 1.5.1
 Date: 07. 02. 2026
   Changes:
